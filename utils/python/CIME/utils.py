@@ -206,8 +206,8 @@ def run_cmd_no_fail(cmd, input_str=None, from_dir=None, verbose=None,
     'foo'
     """
     stat, output, errput = run_cmd(cmd, input_str, from_dir, verbose, arg_stdout, arg_stderr)
-    expect(stat == 0, "Command: '%s' failed with error '%s'%s" %
-           (cmd, errput, "" if from_dir is None else " from dir '%s'" % from_dir))
+    expect(stat == 0, "STDOUT: %s ___...___ Command: '%s' failed with error '%s'%s" %
+           (output, cmd, errput, "" if from_dir is None else " from dir '%s'" % from_dir))
     return output
 
 def check_minimum_python_version(major, minor):
