@@ -29,11 +29,49 @@ foreach $dir (@paths) {  # (could check that directories exist here)
 # automatically eliminates redunancies.
 %src = ();
 foreach $dir (@paths) {
+
+    # MSL Jan-2018
+    # the following Sets up .excludes if exists
+    # Only search in 4 dir levels: ./ ../ ../../ & ../../../    
+    # Blunt force. Didn't wanna require any "use" statements since there are none.
+    # At this point, GEOS-Chem is the only dir tree that has dependency subdirs in 
+    # Filepath generated for CAM by CIME.
+    if ( (-e "$dir/.exclude") && (open(EXCLUDE,"$dir/.exclude") ) ) {
+	@excludes = <EXCLUDE>;
+	close( EXCLUDE );
+	print "Exclude:\n @excludes\n\n";
+    }
+    if ( (-e "$dir/../.exclude") && (open(EXCLUDE,"$dir/../.exclude") ) ) {
+	@excludes = <EXCLUDE>;
+	close( EXCLUDE );
+	print "Exclude:\n @excludes\n\n";
+    }
+    if ( (-e "$dir/../../.exclude") && (open(EXCLUDE,"$dir/../../.exclude") ) ) {
+	@excludes = <EXCLUDE>;
+	close( EXCLUDE );
+	print "Exclude:\n @excludes\n\n";
+    }
+    if ( (-e "$dir/../../../.exclude") && (open(EXCLUDE,"$dir/../../../.exclude") ) ) {
+	@excludes = <EXCLUDE>;
+	close( EXCLUDE );
+	print "Exclude:\n @excludes\n\n";
+    }
+
     @filenames = (glob("$dir/*.[Ffc]"), glob("$dir/*.[Ff]90"), glob("$dir/*.cpp"));
     foreach $filename (@filenames) {
 	$filename =~ s!.*/!!;                   # remove part before last slash
-	$src{$filename} = 1;
+
+        # If filename is in local exclude file, don't add to list. - MSL
+	my $matches = grep { /$filename/ } @excludes;
+	if ($matches) { 
+	    print "Exclusion matched file, $filename in $dir\n\n";
+	    # Don't set $src{$filename} at all. - MSL (is this correct?)
+	}else{
+	    $src{$filename} = 1;
+	}
     }
+
+    # No exclusion func for templates - MSL
     @templates = glob("$dir/*.F90.in");
     foreach $filename (@templates) {
 	$filename =~ s!.*/!!;                   # remove part before last slash
@@ -42,7 +80,8 @@ foreach $dir (@paths) {
 	delete $src{$dfile} if(defined $src{$dfile});
 	$src{$filename} = 1;
     }
-}
+    @excludes = ();
+} # terminate foreach $dir in (@paths) - MSL
 
 my @srcfiles;
 my $foundcnt=0;
