@@ -262,6 +262,72 @@ using a fortran linker.
   <SUPPORTS_CXX>TRUE</SUPPORTS_CXX>
 </compiler>
 
+<compiler COMPILER="intelgcc">
+  <!-- <CFLAGS> -->
+  <!--   <base> -std=gnu99 </base> -->
+  <!--   <append DEBUG="TRUE"> -g </append> -->
+  <!-- </CFLAGS> -->
+  <!-- <CPPDEFS> -->
+  <!--   <append> -DFORTRANUNDERSCORE -DNO_CRAY_POINTERS -DNO_SHR_VMATH  </append> -->
+  <!-- </CPPDEFS> -->
+  <!-- <CXX_LINKER>FORTRAN</CXX_LINKER> -->
+  <CFLAGS>
+    <base> -mcmodel=medium -std=gnu99 </base>
+    <append compile_threaded="true"> -fopenmp </append>
+    <append DEBUG="TRUE"> -g -Wall </append>
+    <append DEBUG="FALSE"> -O </append>
+  </CFLAGS>
+  <CMAKE_OPTS>
+    <append MODEL="cism"> -D CISM_GNU=ON </append>
+  </CMAKE_OPTS>
+  <CPPDEFS>
+    <!-- http://gcc.gnu.org/onlinedocs/gfortran/ -->
+    <append> -DFORTRANUNDERSCORE -DNO_R16 -DCPRINTEL </append>
+  </CPPDEFS>
+  <CXX_LINKER>FORTRAN</CXX_LINKER>
+  <FC_AUTO_R8>
+    <base> -r8 </base>
+  </FC_AUTO_R8>
+  <FFLAGS>
+    <base> -qno-opt-dynamic-align  -convert big_endian -assume byterecl -ftz -traceback -assume realloc_lhs -fp-model source  </base>
+    <append compile_threaded="true"> -qopenmp </append>
+    <append DEBUG="TRUE"> -O0 -g -check uninit -check bounds -check pointers -fpe0 -check noarg_temp_created </append>
+    <append DEBUG="FALSE"> -O2 -debug minimal </append>
+  </FFLAGS>
+  <FFLAGS_NOOPT>
+    <base> -O0 </base>
+    <append compile_threaded="true"> -qopenmp </append>
+  </FFLAGS_NOOPT>
+  <FIXEDFLAGS>
+    <base> -fixed -132 </base>
+  </FIXEDFLAGS>
+  <FREEFLAGS>
+    <base> -free </base>
+  </FREEFLAGS>
+  <!-- Intel 17 has a bug - usually this would be TRUE -->
+  <HAS_F2008_CONTIGUOUS>FALSE</HAS_F2008_CONTIGUOUS>
+  <LDFLAGS>
+    <append compile_threaded="true"> -qopenmp </append>
+  </LDFLAGS>
+  <MPICC> mpicc  </MPICC>
+  <MPICXX> mpicxx </MPICXX>
+  <MPIFC> mpif90 </MPIFC>
+  <SCC> gcc </SCC>
+  <SCXX> g++ </SCXX>
+  <SFC> ifort </SFC>
+  <SLIBS>
+    <append MPILIB="mpich"> -mkl=cluster </append>
+    <append MPILIB="mpich2"> -mkl=cluster </append>
+    <append MPILIB="mvapich"> -mkl=cluster </append>
+    <append MPILIB="mvapich2"> -mkl=cluster </append>
+    <append MPILIB="mpt"> -mkl=cluster </append>
+    <append MPILIB="openmpi"> -mkl=cluster </append>
+    <append MPILIB="impi"> -mkl=cluster </append>
+    <append MPILIB="mpi-serial"> -mkl </append>
+  </SLIBS>
+  <SUPPORTS_CXX>TRUE</SUPPORTS_CXX>
+</compiler>
+
 <compiler COMPILER="nag">
   <CFLAGS>
     <base> -std=gnu99 </base>
